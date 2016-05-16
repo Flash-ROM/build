@@ -194,6 +194,7 @@ else
   endif # TARGET_BUILD_APPS
 endif # CUSTOM_BUILD
 
+all_named_products :=
 ifeq ($(CUSTOM_BUILD),)
 # Find the product config makefile for the current product.
 # all_product_configs consists items like:
@@ -208,9 +209,11 @@ $(foreach f, $(all_product_configs),\
     $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
     $(if $(_cpm_word2),\
         $(eval all_product_makefiles += $(_cpm_word2))\
+        $(eval all_named_products += $(_cpm_word2))\
         $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
             $(eval current_product_makefile += $(_cpm_word2)),),\
         $(eval all_product_makefiles += $(f))\
+        $(eval all_named_products += $(basename $(notdir $(f))))\
         $(if $(filter $(TARGET_PRODUCT),$(basename $(notdir $(f)))),\
             $(eval current_product_makefile += $(f)),)))
 

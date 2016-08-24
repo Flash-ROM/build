@@ -1,7 +1,7 @@
 
 # List of variables we want to print in the build banner.
 print_build_config_vars := \
-  PLATFORM_VERSION \
+  FLASH_VERSION \
   TARGET_PRODUCT \
   TARGET_ARCH \
   TARGET_ARCH_VARIANT \

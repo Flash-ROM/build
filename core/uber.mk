@@ -87,6 +87,7 @@ DISABLE_POLLY_O3 := \
 # Disable modules that dont work with Polly. Split up by arch.
 DISABLE_POLLY_arm := \
 	healthd \
+	libcrypto_static \
 	libicuuc \
 	libinputflinger \
 	libjni_snapcammosaic \

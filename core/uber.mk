@@ -144,7 +144,6 @@ endif
 
 ifeq ($(my_sdclang), true)
     my_cflags += -Qunused-arguments
-    my_cppflags += -Wno-unknown-warning
 else ifeq ($(my_clang),true)
   ifndef LOCAL_IS_HOST_MODULE
     my_cflags := $(filter-out -g,$(my_cflags))
@@ -152,12 +151,16 @@ else ifeq ($(my_clang),true)
     # Don't show unused warning on Clang and GCC
     my_cflags += $(POLLY) -Qunused-arguments
   endif
+else
+    my_cflags += -Wno-unknown-warning
 endif
 
 ifeq ($(STRICT_ALIASING),true)
   my_cflags := $(filter-out -fno-strict-aliasing,$(my_cflags))
   ifneq (1,$(words $(filter $(LOCAL_DISABLE_STRICT),$(LOCAL_MODULE))))
     ifeq ($(my_clang),true)
+      my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_GLANG_LEVEL)
+    else ifeq ($(my_sdclang),true)
       my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_GLANG_LEVEL)
     else
       my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_GCC_LEVEL)
@@ -168,7 +171,9 @@ endif
 ifeq ($(GRAPHITE_OPTS),true)
   ifneq (1,$(words $(filter $(LOCAL_DISABLE_GRAPHITE),$(LOCAL_MODULE))))
     ifneq ($(my_clang),true)
-      my_cflags += $(GRAPHITE_FLAGS)
+      ifneq ($(my_sdclang),true)
+        my_cflags += $(GRAPHITE_FLAGS)
+      endif
     endif
   endif
 endif

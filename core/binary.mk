@@ -209,8 +209,6 @@ ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
 
-my_sdclang := $(strip $(LOCAL_SDCLANG))
-
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
@@ -253,10 +251,24 @@ endif
 my_cppflags := $(my_cpp_std_version) $(my_cppflags)
 
 
+my_sdclang := $(strip $(LOCAL_SDCLANG))
+
 ifeq ($(SDCLANG),true)
     ifeq ($(my_sdclang),)
         my_sdclang := true
     endif
+endif
+
+ifeq ($(my_sdclang),true)
+  ifneq ($(HOST_OS),linux)
+    $(warning ****************************************************************)
+    $(warning * SDCLANG is not supported on non-linux hosts. Disabling...)
+    $(warning ****************************************************************)
+    my_sdclang := false
+    ifeq ($(SDCLANG_FORCED),true)
+      $(error $(LOCAL_PATH): SDCLANG_FORCED was triggered! You are not allowed to build without SDCLANG while it is enabled... Dying...)
+    endif
+  endif
 endif
 
 include $(BUILD_SYSTEM)/uber.mk
@@ -311,39 +323,39 @@ my_target_global_cppflags :=
 endif # LOCAL_SDK_VERSION
 
 ifeq ($(my_clang),true)
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
-    ifeq ($(my_sdclang),true)
-        SDCLANG_PRECONFIGURED_FLAGS := -Wno-vectorizer-no-neon -O3
+  my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CFLAGS)
+  my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CONLYFLAGS)
+  my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
+  ifeq ($(my_sdclang),true)
+    SDCLANG_PRECONFIGURED_FLAGS := -Wno-vectorizer-no-neon
 
-        ifeq ($(LOCAL_SDCLANG_LTO), true)
-        ifneq ($(LOCAL_MODULE_CLASS), STATIC_LIBRARIES)
+    ifeq ($(LOCAL_SDCLANG_LTO), true)
+      ifneq ($(LOCAL_MODULE_CLASS), STATIC_LIBRARIES)
+        ifeq ($(strip $(LOCAL_SDCLANG_LTO_LDFLAGS)),)
+          LOCAL_SDCLANG_LTO_LDFLAGS := $(SDCLANG_COMMON_FLAGS)
+        endif
 
-            ifeq ($(strip $(LOCAL_SDCLANG_LTO_LDFLAGS)),)
-                LOCAL_SDCLANG_LTO_LDFLAGS := $(SDCLANG_COMMON_FLAGS)
-            endif
-
-            SDCLANG_PRECONFIGURED_FLAGS += -fuse-ld=qcld -flto
-            my_target_global_ldflags += -fuse-ld=qcld -flto $(LOCAL_SDCLANG_LTO_LDFLAGS)
-        endif
-        endif
-        my_target_global_cflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
-        SDCLANG_PRECONFIGURED_FLAGS :=
-
-        ifeq ($(strip $(my_cc)),)
-            my_cc := $(SDCLANG_PATH)/clang
-        endif
-        ifeq ($(strip $(my_cxx)),)
-            my_cxx := $(SDCLANG_PATH)/clang++
-        endif
+        SDCLANG_PRECONFIGURED_FLAGS += -fuse-ld=qcld -flto
+        my_target_global_ldflags += -fuse-ld=qcld -flto $(LOCAL_SDCLANG_LTO_LDFLAGS)
+      endif
     endif
+
+    my_target_global_cflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
+    SDCLANG_PRECONFIGURED_FLAGS :=
+
+    ifeq ($(strip $(my_cc)),)
+      my_cc := $(SDCLANG_PATH)/clang
+    endif
+    ifeq ($(strip $(my_cxx)),)
+      my_cxx := $(SDCLANG_PATH)/clang++
+    endif
+  endif
 else
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAGS)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
+  my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS)
+  my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CONLYFLAGS)
+  my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAGS)
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
 endif # my_clang
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)

@@ -33,7 +33,9 @@ STRICT_CLANG_LEVEL := \
 ############
 # GRAPHITE #
 ############
-LOCAL_DISABLE_GRAPHITE :=
+LOCAL_DISABLE_GRAPHITE := \
+	libfec_rs \
+        libfec_rs_host \
 
 GRAPHITE_FLAGS := \
 	-fgraphite \
@@ -50,18 +52,12 @@ GRAPHITE_FLAGS := \
 #########
 
 # Polly flags for use with Clang
-POLLY :=-mllvm -polly \
-	-mllvm -polly-parallel \
-	-mllvm -polly-ast-use-context \
-	-mllvm -polly-vectorizer=polly \
-	-mllvm -polly-opt-fusion=max \
-	-mllvm -polly-opt-maximize-bands=yes \
-	-mllvm -polly-run-dce \
-	-mllvm -polly-dependences-computeout=0 \
-	-mllvm -polly-dependences-analysis-type=value-based \
-	-mllvm -polly-run-inliner \
-	-mllvm -polly-detect-keep-going \
-	-mllvm -polly-rtc-max-arrays-per-group=40
+POLLY := -mllvm -polly \
+	 -mllvm -polly-parallel -lgomp \
+	 -mllvm -polly-vectorizer=polly \
+	 -mllvm -polly-opt-fusion=max \
+	 -mllvm -polly-opt-maximize-bands=yes \
+	 -mllvm -polly-run-inliner
 
 # Those are mostly Bluetooth modules
 DISABLE_POLLY_O3 := \
@@ -72,7 +68,6 @@ DISABLE_POLLY_O3 := \
 	bluetooth.mapsapi \
         bluetooth.default \
         bluetooth.mapsapi \
-        libart-compiler \
         libbluetooth_jni \
         libbt% \
         libosi \
@@ -86,13 +81,13 @@ DISABLE_POLLY_O3 := \
 
 # Disable modules that dont work with Polly. Split up by arch.
 DISABLE_POLLY_arm := \
-	healthd \
-	libcrypto_static \
-	libicuuc \
-	libinputflinger \
-	libjni_snapcammosaic \
+	libandroid \
+	libFraunhoferAAC \
 	libjpeg_static \
-	recovery
+	libopus \
+	libpdfium% \
+	libskia_static \
+	libstagefright%
 
 DISABLE_POLLY_arm64 := \
 	healthd \
@@ -138,19 +133,42 @@ LOCAL_DISABLE_POLLY := \
   $(DISABLE_POLLY_O3)
 
 # Set POLLY based on DISABLE_POLLY
+ifeq ($(LOCAL_CLANG),false)
+  POLLY :=
+endif
+
 ifeq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
   POLLY :=
 endif
 
+
+my_cflags := $(filter-out -Wall -Werror -g -O3 -O2 -Os -O1 -O0 -Og -Oz -Wextra -Weverything,$(my_cflags))
+
+ifeq ($(O3_OPTS),true)
+  ifeq (1,$(words $(filter $(DISABLE_POLLY_O3),$(LOCAL_MODULE))))
+      my_cflags += -O2
+  else
+      my_cflags += -O3
+  endif
+else
+  my_cflags += -O2
+endif
+
 ifeq ($(my_sdclang), true)
+  ifndef LOCAL_IS_HOST_MODULE
+    # Enable Polly if not blacklisted.
+    # Don't show unused warning on Clang and GCC
+    my_cflags += $(POLLY)
+  endif
+
   ifeq ($(my_clang),true)
     my_cflags += -Qunused-arguments
   else
     my_cflags += -Wno-unknown-warning
   endif
+
 else ifeq ($(my_clang),true)
   ifndef LOCAL_IS_HOST_MODULE
-    my_cflags := $(filter-out -g,$(my_cflags))
     # Enable Polly if not blacklisted.
     # Don't show unused warning on Clang and GCC
     my_cflags += $(POLLY) -Qunused-arguments
@@ -182,14 +200,3 @@ ifeq ($(GRAPHITE_OPTS),true)
   endif
 endif
 
-ifeq ($(O3_OPTS),true)
-  my_cflags := $(filter-out -Wall -Werror -g -O3 -O2 -Os -O1 -O0 -Og -Oz -Wextra -Weverything,$(my_cflags))
-  ifeq (1,$(words $(filter $(DISABLE_POLLY_O3),$(LOCAL_MODULE))))
-      my_cflags += -O2
-  else
-      my_cflags += -O3
-  endif
-else
-  my_cflags := $(filter-out -Wall -Werror -g -O3 -O2 -Os -O1 -O0 -Og -Oz -Wextra -Weverything,$(my_cflags))
-  my_cflags += -O2
-endif

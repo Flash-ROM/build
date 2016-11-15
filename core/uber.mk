@@ -53,15 +53,16 @@ GRAPHITE_FLAGS := \
 #########
 
 # Polly flags for use with Clang
-POLLY := -mllvm -polly \
-	 -mllvm -polly-parallel -lgomp \
-	 -mllvm -polly-run-inliner \
-	 -mllvm -polly-opt-fusion=max \
-	 -mllvm -polly-ast-use-context \
-	 -mllvm -polly-opt-maximize-bands=yes \
-	 -mllvm -polly-run-dce \
-	 -mllvm -polly-opt-simplify-deps=no \
-	 -mllvm -polly-position=after-loopopt
+POLLY := \
+	-mllvm -polly \
+	-mllvm -polly-parallel -lgomp \
+	-mllvm -polly-run-inliner \
+	-mllvm -polly-opt-fusion=max \
+	-mllvm -polly-ast-use-context \
+	-mllvm -polly-opt-maximize-bands=yes \
+	-mllvm -polly-run-dce \
+	-mllvm -polly-opt-simplify-deps=no \
+	-mllvm -polly-position=after-loopopt
 
 # Those are mostly Bluetooth modules
 DISABLE_POLLY_O3 := \
@@ -86,7 +87,7 @@ DISABLE_POLLY_O3 := \
 DISABLE_POLLY_arm := \
 	libandroid \
 	libcrypto \
-        libcrypto_static \
+	libcrypto_static \
 	libFraunhoferAAC \
 	libjpeg_static \
 	libLLVM% \
@@ -105,8 +106,8 @@ DISABLE_POLLY_arm64 := \
 
 # Set DISABLE_POLLY based on arch
 LOCAL_DISABLE_POLLY := \
-  $(DISABLE_POLLY_$(TARGET_ARCH))) \
-  $(DISABLE_POLLY_O3)
+	$(DISABLE_POLLY_$(TARGET_ARCH))) \
+	$(DISABLE_POLLY_O3)
 
 # We just don't want these flags
 my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
@@ -126,8 +127,7 @@ ifeq ($(my_sdclang), true)
     ifneq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
       # Enable POLLY only on clang
       ifneq ($(LOCAL_CLANG),false)
-        my_cflags += $(POLLY)
-        my_cflags += -Qunused-arguments
+        my_cflags += $(POLLY) -Qunused-arguments
       endif
     endif
   endif

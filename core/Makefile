@@ -1964,7 +1964,22 @@ otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
-	@echo "Package Complete: $(CUSTOM_TARGET_PACKAGE)"
+	@echo -e ""
+	@echo -e ""
+	@echo -e ""
+	@echo -e ""
+	@echo -e "   _|_|_|_|  _|          _|_|      _|_|_|  _|    _|      _|_|_|      _|_|    _|      _|  "
+	@echo -e "   _|        _|        _|    _|  _|        _|    _|      _|    _|  _|    _|  _|_|  _|_|  "
+	@echo -e "   _|_|_|    _|        _|_|_|_|    _|_|    _|_|_|_|      _|_|_|    _|    _|  _|  _|  _|  "
+	@echo -e "   _|        _|        _|    _|        _|  _|    _|      _|    _|  _|    _|  _|      _|  "
+	@echo -e "   _|        _|_|_|_|  _|    _|  _|_|_|    _|    _|      _|    _|    _|_|    _|      _|  "
+	@echo -e ""
+	@echo -e ""
+	@echo -e ""
+	@echo -e "ZIP: $(CUSTOM_TARGET_PACKAGE)"
+	@echo -e "SIZE: "`ls -hal $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`
+	@echo -e "MD5: "`cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`
+	@echo -e ""
 
 endif    # build_ota_package
 

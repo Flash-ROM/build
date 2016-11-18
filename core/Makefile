@@ -5,17 +5,15 @@
 # PFX: Prefix "target C++:" in yellow
 # INS: Module "Install:" output color (cyan for ics)
 
-ifneq ($(BUILD_WITH_COLORS),0)
-  CL_PFX="\033[33m"
-  CL_INS="\033[36m"
-  CL_RED="\033[31m"
-  CL_GRN="\033[32m"
-  CL_YLW="\033[33m"
-  CL_BLU="\033[34m"
-  CL_MAG="\033[35m"
-  CL_CYN="\033[36m"
-  CL_RST="\033[0m"
-endif
+CL_PFX="\033[01;33m"
+CL_INS="\033[01;36m"
+CL_RED="\033[01;31m"
+CL_GRN="\033[01;32m"
+CL_YLW="\033[01;33m"
+CL_BLU="\033[01;34m"
+CL_MAG="\033[01;35m"
+CL_CYN="\033[01;36m"
+CL_RST="\033[0m"
 
 # HACK: clear LOCAL_PATH from including last build target before calling
 # intermedites-dir-for
@@ -1997,18 +1995,18 @@ bacon: otapackage
 	@echo -e ""
 	@echo -e ""
 	@echo -e ""
-	@echo -e "   _|_|_|_|  _|          _|_|      _|_|_|  _|    _|      _|_|_|      _|_|    _|      _|  "
-	@echo -e "   _|        _|        _|    _|  _|        _|    _|      _|    _|  _|    _|  _|_|  _|_|  "
-	@echo -e "   _|_|_|    _|        _|_|_|_|    _|_|    _|_|_|_|      _|_|_|    _|    _|  _|  _|  _|  "
-	@echo -e "   _|        _|        _|    _|        _|  _|    _|      _|    _|  _|    _|  _|      _|  "
-	@echo -e "   _|        _|_|_|_|  _|    _|  _|_|_|    _|    _|      _|    _|    _|_|    _|      _|  "
+	@echo -e ${CL_RED}"   _|_|_|_|"${CL_YLW}"  _|      "${CL_RED}"    _|_|  "${CL_YLW}"    _|_|_| "${CL_RED}" _|    _|"${CL_YLW}"      _|_|_|  "${CL_RED}"    _|_|  "${CL_YLW}"  _|      _|  "${CL_RST}
+	@echo -e ${CL_RED}"   _|      "${CL_YLW}"  _|      "${CL_RED}"  _|    _|"${CL_YLW}"  _|       "${CL_RED}" _|    _|"${CL_YLW}"      _|    _|"${CL_RED}"  _|    _|"${CL_YLW}"  _|_|  _|_|  "${CL_RST}
+	@echo -e ${CL_RED}"   _|_|_|  "${CL_YLW}"  _|      "${CL_RED}"  _|_|_|_|"${CL_YLW}"    _|_|   "${CL_RED}" _|_|_|_|"${CL_YLW}"      _|_|_|  "${CL_RED}"  _|    _|"${CL_YLW}"  _|  _|  _|  "${CL_RST}
+	@echo -e ${CL_RED}"   _|      "${CL_YLW}"  _|      "${CL_RED}"  _|    _|"${CL_YLW}"        _| "${CL_RED}" _|    _|"${CL_YLW}"      _|    _|"${CL_RED}"  _|    _|"${CL_YLW}"  _|      _|  "${CL_RST}
+	@echo -e ${CL_RED}"   _|      "${CL_YLW}"  _|_|_|_|"${CL_RED}"  _|    _|"${CL_YLW}"  _|_|_|   "${CL_RED}" _|    _|"${CL_YLW}"      _|    _|"${CL_RED}"    _|_|  "${CL_YLW}"  _|      _|  "${CL_RST}
 	@echo -e ""
 	@echo -e ""
 	@echo -e ""
-	@echo -e "ZIP: $(CUSTOM_TARGET_PACKAGE)"
+	@echo -e ${CL_YLW}"ZIP: $(CUSTOM_TARGET_PACKAGE)"
 	@echo -e "SIZE: "`ls -hal $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`
 	@echo -e "MD5: "`cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`
-	@echo -e ""
+	@echo -e ""${CL_RST}
 
 endif    # build_ota_package
 

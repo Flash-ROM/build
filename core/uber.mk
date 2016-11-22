@@ -88,13 +88,16 @@ DISABLE_POLLY_O3 := \
 DISABLE_POLLY_arm :=  \
 	libavcdec \
 	libavcenc \
+	libbnnmlowpV8 \
 	libcrypto \
 	libcrypto_static \
 	libcryptfslollipop \
 	libdng_sdk \
 	libF77blas \
+	libF77blasV8 \
 	libFFTEm \
 	libFraunhoferAAC \
+	libgiftranscode \
 	libjni_filtershow \
 	libjni_filtershow_filters \
 	libjpeg_static \
@@ -116,7 +119,8 @@ DISABLE_POLLY_arm :=  \
 	libwebp-decode \
 	libwebp-encode \
 	libwebrtc% \
-	libyuv_static
+	libyuv_static \
+	memtest
 
 DISABLE_POLLY_arm64 := \
 	$(DISABLE_POLLY_arm) \

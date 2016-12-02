@@ -257,26 +257,6 @@ else
     my_compiler := clang
 endif
 
-my_sdclang := $(strip $(LOCAL_SDCLANG))
-
-ifeq ($(SDCLANG),true)
-    ifeq ($(my_sdclang),)
-        my_sdclang := true
-    endif
-endif
-
-ifeq ($(my_sdclang),true)
-  ifneq ($(HOST_OS),linux)
-    $(warning ****************************************************************)
-    $(warning * SDCLANG is not supported on non-linux hosts. Disabling...)
-    $(warning ****************************************************************)
-    my_sdclang := false
-    ifeq ($(SDCLANG_FORCED),true)
-      $(error $(LOCAL_PATH): SDCLANG_FORCED was triggered! You are not allowed to build without SDCLANG while it is enabled... Dying...)
-    endif
-  endif
-endif
-
 include $(BUILD_SYSTEM)/uber.mk
 
 # arch-specific static libraries go first so that generic ones can depend on them
@@ -333,30 +313,6 @@ ifeq ($(my_clang),true)
   my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CONLYFLAGS)
   my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
-  ifeq ($(my_sdclang),true)
-    SDCLANG_PRECONFIGURED_FLAGS := -Wno-vectorizer-no-neon
-
-    ifeq ($(LOCAL_SDCLANG_LTO), true)
-      ifneq ($(LOCAL_MODULE_CLASS), STATIC_LIBRARIES)
-        ifeq ($(strip $(LOCAL_SDCLANG_LTO_LDFLAGS)),)
-          LOCAL_SDCLANG_LTO_LDFLAGS := $(SDCLANG_COMMON_FLAGS)
-        endif
-
-        SDCLANG_PRECONFIGURED_FLAGS += -fuse-ld=qcld -flto
-        my_target_global_ldflags += -fuse-ld=qcld -flto $(LOCAL_SDCLANG_LTO_LDFLAGS)
-      endif
-    endif
-
-    my_target_global_cflags += $(SDCLANG_COMMON_FLAGS) $(SDCLANG_PRECONFIGURED_FLAGS)
-    SDCLANG_PRECONFIGURED_FLAGS :=
-
-    ifeq ($(strip $(my_cc)),)
-      my_cc := $(my_cc_wrapper) $(SDCLANG_PATH)/clang
-    endif
-    ifeq ($(strip $(my_cxx)),)
-      my_cxx := $(my_cxx_wrapper) $(SDCLANG_PATH)/clang++
-    endif
-  endif
 else
   my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS)
   my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CONLYFLAGS)

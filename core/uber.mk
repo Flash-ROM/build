@@ -111,6 +111,8 @@ LOCAL_DISABLE_POLLY := \
 
 # We just don't want these flags
 my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
+my_cppflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cppflags))
+my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_conlyflags))
 
 ifneq (1,$(words $(filter $(DISABLE_POLLY_O3),$(LOCAL_MODULE))))
   # Remove all other "O" flags to set O3
@@ -127,7 +129,8 @@ ifeq ($(my_sdclang), true)
     ifneq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
       # Enable POLLY only on clang
       ifneq ($(LOCAL_CLANG),false)
-        my_cflags += $(POLLY) -Qunused-arguments
+        my_cflags += $(POLLY) -Qunused-arguments -fuse-ld=gold
+        my_ldflags += -fuse-ld=gold
       endif
     endif
   endif

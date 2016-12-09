@@ -173,7 +173,7 @@ ccache :=
 # Fill the ccache argument if USE_CCACHE is not set to false.
 ifneq ($(filter-out false,$(USE_CCACHE)),)
     # Detect if the system already has ccache installed.
-    ccache := $(shell which ccache)
+    ccache := $(shell command -v ccache)
 
     # Use the prebuilt one if host doesn't have ccache installed.
     ifeq ($(ccache),)

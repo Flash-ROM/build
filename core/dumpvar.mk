@@ -1,7 +1,6 @@
 
 # List of variables we want to print in the build banner.
 print_build_config_vars := \
-  PLATFORM_VERSION \
   ROM_NAME \
   ROM_VERSION \
   TARGET_PRODUCT \
@@ -12,6 +11,8 @@ print_build_config_vars := \
   TARGET_2ND_CPU_VARIANT \
   HOST_ARCH \
   BUILD_ID \
+  TARGET_NDK_GCC_VERSION \
+  LLVM_RELEASE_VERSION \
   OUT_DIR
 
 ifeq ($(TARGET_BUILD_PDK),true)

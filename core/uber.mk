@@ -103,12 +103,15 @@ DISABLE_POLLY_arm :=  \
 	libjpeg_static \
 	libLLVMCodeGen \
 	libLLVMSupport \
+	libLLVMLTO \
 	libmedia_jni \
 	libmpeg2dec \
+	libmtp \
 	libbnnmlowp \
 	libopus \
 	libpdfiumfxge \
 	libpdfiumjpeg \
+	libpdfiumlcms \
 	librsjni \
 	libRSCpuRef \
 	libscrypttwrp_static \
@@ -119,6 +122,7 @@ DISABLE_POLLY_arm :=  \
 	libwebp-decode \
 	libwebp-encode \
 	libwebrtc% \
+	libv8 \
 	libyuv_static \
 	memtest
 

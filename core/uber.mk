@@ -148,15 +148,17 @@ else
   my_cflags += -O2
 endif
 
-ifeq ($(my_clang), true)
-  # Do not enable POLLY on libraries
-  ifndef LOCAL_IS_HOST_MODULE
-    # Enable POLLY if not blacklisted
-    ifneq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
-      # Enable POLLY only on clang
-      ifneq ($(LOCAL_CLANG),false)
-        my_cflags += $(POLLY) -Qunused-arguments -fuse-ld=gold
-        my_ldflags += -fuse-ld=gold
+ifeq ($(POLLY_OPTS),true)
+  ifeq ($(my_clang), true)
+    # Do not enable POLLY on libraries
+    ifndef LOCAL_IS_HOST_MODULE
+      # Enable POLLY if not blacklisted
+      ifneq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
+        # Enable POLLY only on clang
+        ifneq ($(LOCAL_CLANG),false)
+          my_cflags += $(POLLY) -Qunused-arguments -fuse-ld=gold
+          my_ldflags += -fuse-ld=gold
+        endif
       endif
     endif
   endif

@@ -660,7 +660,7 @@ proto_intermediate_dir := $(intermediates)/proto
 proto_intermediate_cpps := $(patsubst $(proto_gen_dir)/%,$(proto_intermediate_dir)/%,\
     $(proto_generated_cpps))
 $(proto_intermediate_cpps) : $(proto_intermediate_dir)/% : $(proto_gen_dir)/% | $(ACP)
-	@echo "Copy: $@"
+	@echo -e ${CL_GRN}"Copy:"${CL_RST}" $@"
 	$(copy-file-to-target)
 	$(hide) cp $(basename $<).h $(basename $@).h
 $(call track-src-file-gen,$(proto_sources),$(proto_intermediate_cpps))

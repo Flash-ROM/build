@@ -1095,15 +1095,6 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests :
 
-# To catch more build breakage, check build tests modules in eng and userdebug builds.
-ifeq ($(ANDROID_TEST_CHECK),true)
-ifneq ($(TARGET_BUILD_PDK),true)
-ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
-droidcore :
-endif
-endif
-endif
-
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))

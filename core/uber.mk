@@ -17,6 +17,7 @@
 # Strict Aliasing #
 ###################
 LOCAL_DISABLE_STRICT := \
+	libc% \
 	libpdfiumfpdfapi \
 	mdnsd
 

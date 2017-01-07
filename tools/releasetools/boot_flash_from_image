@@ -47,14 +47,13 @@ if path.exists(defconfig):
     prekernel_version = search('CONFIG_LOCALVERSION=.*\n', open(defconfig, 'r').read())
     if prekernel_version:
         kernel_version = sub(r'(CONFIG_LOCALVERSION=)|\"|\n|-', "", prekernel_version.group(0))
-        kernel_version = "%s-%s-kernel" % (kernel_version or "Flash", device)
+        kernel_version = "%s-%s-kernel" % (kernel_version or "flash", device)
     else:
-        kernel_version = "Flash-%s-kernel" % device
+        kernel_version = "flash-%s-kernel" % device
 else:
-    kernel_version = "Flash-%s-kernel" % device
+    kernel_version = "flash-%s-kernel" % device
 
 updater = "%s/obj/EXECUTABLES/updater_intermediates/updater" % out
-signer = "%s/framework/signapk.jar" % environ['ANDROID_HOST_OUT']
 
 # rm -r $OUT/*kernel*
 for f in listdir(out):
@@ -68,10 +67,6 @@ for f in listdir(out):
 if not path.exists(updater):
     with open("dump", "w") as dump:
         silencer = call('make updater'.split(), stdout = dump)
-    remove("dump")
-if not path.exists(signer):
-    with open("dump", "w") as dump:
-        silencer = call('make signapk'.split(), stdout = dump)
     remove("dump")
 
 zip_dir = "%s/%s" % (out, kernel_version)
@@ -137,11 +132,4 @@ with ZipFile("%s.zip" % zip_dir, "w") as zipper:
             else:
                 zipper.write(fn, fn[rootlen:])
 
-# sign it
-testkey_x = "%s/build/target/product/security/testkey.x509.pem" % source
-testkey_p = "%s/build/target/product/security/testkey.pk8" % source
-call(['java', '-jar', signer, testkey_x, testkey_p, "%s.zip" % zip_dir, "%s-signed.zip" % zip_dir])
-remove("%s.zip" % zip_dir)
-#rmtree(zip_dir)
-print md5(open("%s-signed.zip" % zip_dir, "rb").read()).hexdigest() + " %s-signed.zip" % (kernel_version)
-print "kernel saved to %s-signed.zip" % zip_dir
+print "kernel saved to %s.zip" % zip_dir

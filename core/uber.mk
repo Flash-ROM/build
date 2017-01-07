@@ -77,6 +77,7 @@ DISABLE_POLLY_O3 := \
 	libbluetooth_jni \
 	libbt% \
 	libosi \
+	linker \
 	ositests \
 	net_bdtool \
 	net_hci \

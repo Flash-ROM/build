@@ -165,10 +165,6 @@ ifeq ($(POLLY_OPTS),true)
   endif
 endif
 
-ifeq ($(LOCAL_CLANG),false)
-  my_cflags += -Wno-unknown-warning
-endif
-
 ifeq ($(STRICT_ALIASING),true)
   # Remove the no-strict-aliasing flags
   my_cflags := $(filter-out -fno-strict-aliasing,$(my_cflags))
@@ -186,4 +182,9 @@ ifeq ($(GRAPHITE_OPTS),true)
   ifneq ($(LOCAL_CLANG),false)
     my_cflags += $(GRAPHITE_FLAGS)
   endif
+endif
+
+ifeq ($(LOCAL_CLANG_LTO),true)
+  my_cflags += -flto -fuse-ld=gold
+  my_ldflags += -flto -fuse-ld=gold
 endif

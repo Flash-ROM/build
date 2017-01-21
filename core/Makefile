@@ -1994,24 +1994,27 @@ bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e ""
+	@echo -e ${CL_CYN}
+	@echo -e "================================================================================================"
+	@echo -e "                                                                                                "
+	@echo -e "                                                                                                "
+	@echo -e "   ########\ ##\        ######\   ######\  ##\   ##\        #######\   ######\  ##\      ##\    "
+	@echo -e "   ##  _____|## |      ##  __##\ ##  __##\ ## |  ## |       ##  __##\ ##  __##\ ###\    ### |   "
+	@echo -e "   ## |      ## |      ## /  ## |## /  \__|## |  ## |       ## |  ## |## /  ## |####\  #### |   "
+	@echo -e "   #####\    ## |      ######## |\######\  ######## |       #######  |## |  ## |##\##\## ## |   "
+	@echo -e "   ##  __|   ## |      ##  __## | \____##\ ##  __## |       ##  __##< ## |  ## |## \###  ## |   "
+	@echo -e "   ## |      ## |      ## |  ## |##\   ## |## |  ## |       ## |  ## |## |  ## |## |\#  /## |   "
+	@echo -e "   ## |      ########\ ## |  ## |\######  |## |  ## |       ## |  ## | ######  |## | \_/ ## |   "
+	@echo -e "   \__|      \________|\__|  \__| \______/ \__|  \__|       \__|  \__| \______/ \__|     \__|   "
+	@echo -e "                                                                                                "
+	@echo -e "                                                                                                "
+	@echo -e "================================================================================================"
 	@echo -e ""
-	@echo -e ${CL_RED}"=============================================================================================="${CL_RST}
 	@echo -e ""
-	@echo -e ""
-	@echo -e ${CL_RED}"       _/_/_/_/"${CL_YLW}"  _/  "${CL_RED}"        _/_/ "${CL_YLW}"     _/_/_/"${CL_RED}"  _/    _/"${CL_YLW}"      _/_/_/"${CL_RED}"      _/_/"${CL_YLW}"    _/      _/   "${CL_RST}
-	@echo -e ${CL_RED}"      _/       "${CL_YLW}" _/   "${CL_RED}"     _/    _/"${CL_YLW}"  _/       "${CL_RED}" _/    _/"${CL_YLW}"      _/    _/"${CL_RED}"  _/    _/"${CL_YLW}"  _/_/  _/_/    "${CL_RST}
-	@echo -e ${CL_RED}"     _/_/_/    "${CL_YLW}"_/    "${CL_RED}"    _/_/_/_/"${CL_YLW}"    _/_/   "${CL_RED}" _/_/_/_/"${CL_YLW}"      _/_/_/ "${CL_RED}"   _/    _/"${CL_YLW}"  _/  _/  _/     "${CL_RST}
-	@echo -e ${CL_RED}"    _/       "${CL_YLW}" _/     "${CL_RED}"   _/    _/"${CL_YLW}"        _/ "${CL_RED}" _/    _/"${CL_YLW}"      _/    _/"${CL_RED}"  _/    _/"${CL_YLW}"  _/      _/      "${CL_RST}
-	@echo -e ${CL_RED}"   _/        "${CL_YLW}"_/_/_/_/"${CL_RED}"  _/    _/"${CL_YLW}"  _/_/_/   "${CL_RED}" _/    _/"${CL_YLW}"      _/    _/"${CL_RED}"    _/_/  "${CL_YLW}"  _/      _/       "${CL_RST}
-	@echo -e ""
-	@echo -e ""
-	@echo -e ${CL_RED}"=============================================================================================="${CL_RST}
-	@echo -e ""
-	@echo -e ""
-	@echo -e ${CL_YLW}"ZIP: $(CUSTOM_TARGET_PACKAGE)"
+	@echo -e "ZIP: $(CUSTOM_TARGET_PACKAGE)"
 	@echo -e "SIZE: "`ls -hal $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`
 	@echo -e "MD5: "`cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`
-	@echo -e ""${CL_RST}
+	@echo -e ${CL_RST}
 
 bootzip: bootimage
 	   $(BOOT_ZIP_FROM_IMAGE_SCRIPT) \

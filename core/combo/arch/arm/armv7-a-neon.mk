@@ -25,7 +25,12 @@ ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)),cortex-a8)
 		-Wl,--fix-cortex-a8
 else
 ifneq (,$(filter cortex-a7 cortex-a53 cortex-a53.a57,$(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
-	arch_variant_cflags := -mcpu=cortex-a7
+	ifneq (,$(filter cortex-a7,$(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
+		arch_variant_cflags := -mcpu=cortex-a7
+	else
+		# Assume the closest microarchitecture to a ARMv8.
+		arch_variant_cflags := -mcpu=cortex-a15
+	endif
 
 	local_arch_has_lpae := true
 	arch_variant_ldflags := \

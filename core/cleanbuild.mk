@@ -175,7 +175,7 @@ PREVIOUS_BUILD_CONFIG := $(strip $(PREVIOUS_BUILD_CONFIG))
 PREVIOUS_SANITIZE_TARGET := $(strip $(PREVIOUS_SANITIZE_TARGET))
 
 ifdef PREVIOUS_BUILD_CONFIG
-  ifneq "$(current_build_config)" "$(PREVIOUS_BUILD_CONFIG)"
+  ifneq ($(current_build_config),$(PREVIOUS_BUILD_CONFIG))
     $(info *** Build configuration changed: "$(PREVIOUS_BUILD_CONFIG)" -> "$(current_build_config)")
     ifneq ($(DISABLE_AUTO_INSTALLCLEAN),true)
       force_installclean := true
@@ -297,7 +297,7 @@ objclean:
 	$(hide) rm -rf $(FILES)
 	@echo -e ${CL_GRN}"Deleted images and staging directories."${CL_RST}
 
-ifeq "$(force_installclean)" "true"
+ifeq ($(force_installclean),true)
   $(info *** Forcing "make installclean"...)
   $(info *** rm -rf $(dataclean_files) $(installclean_files))
   $(shell rm -rf $(dataclean_files) $(installclean_files))

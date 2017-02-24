@@ -57,7 +57,6 @@ DISABLE_O3 := \
 	bluetooth.mapsapi \
 	libbluetooth_jni \
 	libbt% \
-	libosi \
 	linker \
 	ositests \
 	net_bdtool \

@@ -1,14 +1,18 @@
 APPLY_A53_ERRATA_FIXES :=
+arch_variant_cflags :=
 
-ifneq (,$(filter kryo,$(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
+ifneq ($(filter kryo,$(TARGET_2ND_CPU_VARIANT)),)
 	arch_variant_cflags := -mcpu=cortex-a57
-else
-ifneq (,$(filter cortex-a53,$(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
+endif
+
+ifneq ($(filter cortex-a53,$(TARGET_2ND_CPU_VARIANT)),)
 	arch_variant_cflags := -mcpu=cortex-a53
 	APPLY_A53_ERRATA_FIXES := true
-else
-	arch_variant_cflags :=
 endif
+
+ifneq ($(filter cortex-a53.a57,$(TARGET_2ND_CPU_VARIANT)),)
+        arch_variant_cflags := -mcpu=cortex-a57
+        APPLY_A53_ERRATA_FIXES := true
 endif
 
 ifneq ($(strip $(TARGET_IS_CORTEX-A53)),)

@@ -1,5 +1,4 @@
 ## Clang configurations.
-
 LLVM_PREBUILTS_PATH := $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin
 LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
 
@@ -10,16 +9,6 @@ LLVM_LINK := $(LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
 
 CLANG_TBLGEN := $(BUILD_OUT_EXECUTABLES)/clang-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 LLVM_TBLGEN := $(BUILD_OUT_EXECUTABLES)/llvm-tblgen$(BUILD_EXECUTABLE_SUFFIX)
-
-# RenderScript-specific tools
-# These are tied to the version of LLVM directly in external/, so they might
-# trail the host prebuilts being used for the rest of the build process.
-RS_LLVM_PREBUILTS_VERSION := clang-2690385
-RS_LLVM_PREBUILTS_BASE := prebuilts/clang/host
-RS_LLVM_PREBUILTS_PATH := $(RS_LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(RS_LLVM_PREBUILTS_VERSION)/bin
-RS_CLANG := $(RS_LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
-RS_LLVM_AS := $(RS_LLVM_PREBUILTS_PATH)/llvm-as$(BUILD_EXECUTABLE_SUFFIX)
-RS_LLVM_LINK := $(RS_LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
 
 # Clang flags for all host or target rules
 CLANG_CONFIG_EXTRA_ASFLAGS :=
@@ -64,6 +53,19 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
 endif
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
+  -fira-loop-pressure \
+  -ftree-loop-distribution \
+  -fsection-anchors \
+  -ftree-loop-im \
+  -ftree-loop-ivcanon \
+  -fgraphite \
+  -fgraphite-identity \
+  -floop-flatten \
+  -floop-parallelize-all \
+  -ftree-loop-linear \
+  -floop-interchange \
+  -floop-strip-mine \
+  -floop-block \
   -finline-functions \
   -finline-limit=64 \
   -fno-canonical-system-headers \

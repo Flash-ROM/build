@@ -46,27 +46,8 @@ GRAPHITE_FLAGS := \
 	-floop-strip-mine \
 	-floop-block
 
-#########
-# POLLY #
-#########
-
-# Polly flags for use with Clang
-POLLY := \
-	-mllvm -polly \
-	-mllvm -polly-parallel -lgomp \
-	-mllvm -polly-ast-use-context \
-	-mllvm -polly-vectorizer=stripmine \
-	-mllvm -polly-opt-fusion=max \
-	-mllvm -polly-opt-maximize-bands=yes \
-	-mllvm -polly-run-dce \
-	-mllvm -polly-position=after-loopopt \
-	-mllvm -polly-run-inliner \
-	-mllvm -polly-detect-keep-going \
-	-mllvm -polly-opt-simplify-deps=no \
-	-mllvm -polly-rtc-max-arrays-per-group=40
-
 # Those are mostly Bluetooth modules
-DISABLE_POLLY_O3 := \
+DISABLE_O3 := \
 	audio.a2dp.default \
 	bdAddrLoader \
 	bdt \
@@ -76,7 +57,6 @@ DISABLE_POLLY_O3 := \
 	bluetooth.mapsapi \
 	libbluetooth_jni \
 	libbt% \
-	libosi \
 	linker \
 	ositests \
 	net_bdtool \
@@ -85,84 +65,22 @@ DISABLE_POLLY_O3 := \
 	net_test_device \
 	net_test_osi
 
-# Disable modules that dont work with Polly. Split up by arch.
-DISABLE_POLLY_arm :=  \
-	libavcdec \
-	libavcenc \
-	libbnnmlowpV8 \
-	libcrypto \
-	libcrypto_static \
-	libcryptfslollipop \
-	libdng_sdk \
-	libF77blas \
-	libF77blasV8 \
-	libFFTEm \
-	libFraunhoferAAC \
-	libgiftranscode \
-	libjni_filtershow \
-	libjni_filtershow_filters \
-	libjpeg_static \
-	libLLVMCodeGen \
-	libLLVMSupport \
-	libLLVMLTO \
-	libmedia_jni \
-	libmpeg2dec \
-	libmtp \
-	libbnnmlowp \
-	libopus \
-	libpdfiumfxge \
-	libpdfiumjpeg \
-	libpdfiumlcms \
-	librsjni \
-	libRSCpuRef \
-	libscrypttwrp_static \
-	libskia_static \
-	libsonic \
-	libstagefright% \
-	libvpx \
-	libwebp-decode \
-	libwebp-encode \
-	libwebrtc% \
-	libv8 \
-	libyuv_static \
-	memtest
-
-DISABLE_POLLY_arm64 := \
-	$(DISABLE_POLLY_arm) \
-	libaudioutils \
-	libscrypt_static \
-	libsvoxpico
-
-# Set DISABLE_POLLY based on arch
-LOCAL_DISABLE_POLLY := \
-	$(DISABLE_POLLY_$(TARGET_ARCH))) \
-	$(DISABLE_POLLY_O3)
 
 # We just don't want these flags
-my_cflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
-my_cppflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz -Wall -Werror -g -Wextra -Weverything,$(my_cppflags))
-my_conlyflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz -Wall -Werror -g -Wextra -Weverything,$(my_conlyflags))
+my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
+my_cppflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cppflags))
+my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_conlyflags))
 
-ifneq (1,$(words $(filter $(DISABLE_POLLY_O3),$(LOCAL_MODULE))))
-  my_cflags += -O3
-else
-  my_cflags += -O2
+ifneq (1,$(words $(filter $(DISABLE_O3),$(LOCAL_MODULE))))
+  # Remove previous Optimization flags, we'll set O3 there
+  my_cflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cflags)) -O3
+  my_conlyflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_conlyflags)) -O3
+  my_cppflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cppflags)) -O3
 endif
 
-ifeq ($(POLLY_OPTS),true)
-  ifeq ($(my_clang), true)
-    # Do not enable POLLY on libraries
-    ifndef LOCAL_IS_HOST_MODULE
-      # Enable POLLY if not blacklisted
-      ifneq (1,$(words $(filter $(LOCAL_DISABLE_POLLY),$(LOCAL_MODULE))))
-        # Enable POLLY only on clang
-        ifneq ($(LOCAL_CLANG),false)
-          my_cflags += $(POLLY) -Qunused-arguments -fuse-ld=gold
-          my_ldflags += -fuse-ld=gold
-        endif
-      endif
-    endif
-  endif
+ifeq ($(LOCAL_CLANG),true)
+  my_cflags += -Qunused-arguments -fuse-ld=gold
+  my_ldflags += -fuse-ld=gold
 endif
 
 ifeq ($(STRICT_ALIASING),true)
@@ -182,9 +100,4 @@ ifeq ($(GRAPHITE_OPTS),true)
   ifneq ($(LOCAL_CLANG),false)
     my_cflags += $(GRAPHITE_FLAGS)
   endif
-endif
-
-ifeq ($(LOCAL_CLANG_LTO),true)
-  my_cflags += -flto -fuse-ld=gold
-  my_ldflags += -flto -fuse-ld=gold
 endif

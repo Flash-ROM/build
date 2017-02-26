@@ -1991,9 +1991,9 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 
 CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(ROM_NAME)_$(TARGET_DEVICE)-$(ROM_VERSION).zip
 
-.PHONY: otapackage bacon bootzip
+.PHONY: otapackage flash bacon bootzip
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-bacon: otapackage
+flash: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e ""
@@ -2018,6 +2018,8 @@ bacon: otapackage
 	@echo -e "SIZE: "`ls -hal $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`
 	@echo -e "MD5: "`cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`
 	@echo -e ${CL_RST}
+
+bacon: flash
 
 bootzip: bootimage
 	   $(BOOT_ZIP_FROM_IMAGE_SCRIPT) \

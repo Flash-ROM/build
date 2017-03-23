@@ -1,12 +1,20 @@
-NINJA := $(shell command -v ninja)
-ifeq ($(NINJA),)
-  NINJA := $(shell command -v ninja-build)
+ifneq ($(FORCE_PREBUILT_NINJA),true)
+  NINJA := $(shell command -v ninja)
   ifeq ($(NINJA),)
-    ifeq ($(filter address,$(SANITIZE_HOST)),)
-      NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
-    else
-      NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
+    NINJA := $(shell command -v ninja-build)
+    ifeq ($(NINJA),)
+      ifeq ($(filter address,$(SANITIZE_HOST)),)
+        NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
+      else
+        NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
+      endif
     endif
+  endif
+else
+  ifeq ($(filter address,$(SANITIZE_HOST)),)
+    NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
+  else
+    NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
   endif
 endif
 

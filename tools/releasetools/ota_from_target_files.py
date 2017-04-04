@@ -678,8 +678,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   #    oem_props, oem_dict, OPTIONS.info_dict))
 
   build = GetBuildProp("ro.build.id", OPTIONS.info_dict)
-  date = GetBuildProp("ro.build.date", OPTIONS.info_dict)
   model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
+  version = GetBuildProp("ro.flash.version", OPTIONS.info_dict)
 
   script.Print("                                               ")
   script.Print("    ___________________________________  __    ")
@@ -696,7 +696,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("                                               ")
   script.Print("    Device       : %s"%(model)                  )
   script.Print("    Build number : %s"%(build)                  )
-  script.Print("    Build date   : %s"%(date)                   )
+  script.Print("    ROM version  : %s"%(version)                )
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()

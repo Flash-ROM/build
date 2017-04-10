@@ -47,36 +47,23 @@ GRAPHITE_FLAGS := \
 	-floop-strip-mine \
 	-floop-block
 
-# Those are mostly Bluetooth modules
-DISABLE_O3 := \
-	audio.a2dp.default \
-	bdAddrLoader \
-	bdt \
-	bdtest \
-	bluetooth.mapsapi \
-	bluetooth.default \
-	bluetooth.mapsapi \
-	libbluetooth_jni \
-	libbt% \
-	linker \
-	ositests \
-	net_bdtool \
-	net_hci \
-	net_test_btcore \
-	net_test_device \
-	net_test_osi
-
-
 # We just don't want these flags
 my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
 my_cppflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cppflags))
 my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_conlyflags))
 
-ifneq (1,$(words $(filter $(DISABLE_O3),$(LOCAL_MODULE))))
-  # Remove previous Optimization flags, we'll set O3 there
-  my_cflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cflags)) -O3 -g0 -DNDEBUG
-  my_conlyflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_conlyflags)) -O3 -g0 -DNDEBUG
-  my_cppflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cppflags)) -O3 -g0 -DNDEBUG
+# Remove previous Optimization flags, we'll set O3 there
+my_cflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cflags)) -O3 -g0 -DNDEBUG
+my_conlyflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_conlyflags)) -O3 -g0 -DNDEBUG
+my_cppflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cppflags)) -O3 -g0 -DNDEBUG
+
+# IPA
+ifndef LOCAL_IS_HOST_MODULE
+  ifeq (,$(filter true,$(my_clang)))
+    my_cflags += -fipa-sra -fipa-pta -fipa-cp -fipa-cp-clone
+  else
+    my_cflags += -analyze -analyzer-purge
+  endif
 endif
 
 ifeq ($(LOCAL_CLANG),false)

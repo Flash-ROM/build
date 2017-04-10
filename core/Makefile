@@ -1982,11 +1982,9 @@ else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 endif
 
-# Assume non-release recoveries to skip signature check
-ifeq ($(TARGET_BUILD_VARIANT),user)
-    sign_arg := -k $(KEY_CERT_PAIR)
-else
-    sign_arg := --no_signing
+# Assume non-release recoveries skip signature check
+ifneq ($(TARGET_BUILD_VARIANT),user)
+    extra_ota_args := --no_signing
 endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
@@ -1995,7 +1993,8 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	   ./build/tools/releasetools/ota_from_target_files -v \
 	   --block \
 	   -p $(HOST_OUT) \
-	   $(sign_arg) \
+	   -k $(KEY_CERT_PAIR) \
+	   $(extra_ota_args) \
 	   --backup=$(backuptool) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@

@@ -5,14 +5,9 @@ ifneq ($(filter kryo,$(TARGET_2ND_CPU_VARIANT)),)
 	arch_variant_cflags := -mcpu=cortex-a57
 endif
 
-ifneq ($(filter cortex-a53,$(TARGET_2ND_CPU_VARIANT)),)
+ifneq ($(filter cortex-a53 cortex-a53.a57,$(TARGET_2ND_CPU_VARIANT)),)
 	arch_variant_cflags := -mcpu=cortex-a53
 	APPLY_A53_ERRATA_FIXES := true
-endif
-
-ifneq ($(filter cortex-a53.a57,$(TARGET_2ND_CPU_VARIANT)),)
-        arch_variant_cflags := -mcpu=cortex-a57
-        APPLY_A53_ERRATA_FIXES := true
 endif
 
 ifneq ($(strip $(TARGET_IS_CORTEX-A53)),)

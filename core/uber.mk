@@ -47,15 +47,13 @@ GRAPHITE_FLAGS := \
 	-floop-strip-mine \
 	-floop-block
 
-# We just don't want these flags
-my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cflags))
-my_cppflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_cppflags))
-my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything,$(my_conlyflags))
+CUSTOM_FLAGS := -O3 -g0 -DNDEBUG
+O_FLAGS := -O3 -O2 -Os -O1 -O0 -Og -Oz
 
-# Remove previous Optimization flags, we'll set O3 there
-my_cflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cflags)) -O3 -g0 -DNDEBUG
-my_conlyflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_conlyflags)) -O3 -g0 -DNDEBUG
-my_cppflags := $(filter-out -O3 -O2 -Os -O1 -O0 -Og -Oz,$(my_cppflags)) -O3 -g0 -DNDEBUG
+# Remove all flags we don't want use high level of optimization
+my_cflags := $(filter-out -Wall -Werror -g -Wextra -Weverything $(O_FLAGS),$(my_cflags)) $(CUSTOM_FLAGS)
+my_cppflags := $(filter-out -Wall -Werror -g -Wextra -Weverything $(O_FLAGS),$(my_cppflags)) $(CUSTOM_FLAGS)
+my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything $(O_FLAGS),$(my_conlyflags)) $(CUSTOM_FLAGS)
 
 # IPA
 ifndef LOCAL_IS_HOST_MODULE
@@ -84,7 +82,7 @@ endif
 
 ifeq ($(GRAPHITE_OPTS),true)
   # Enable graphite only on GCC
-  ifneq ($(LOCAL_CLANG),false)
+  ifneq ($(LOCAL_CLANG),true)
     my_cflags += $(GRAPHITE_FLAGS)
   endif
 endif

@@ -1,17 +1,17 @@
 
 # List of variables we want to print in the build banner.
 print_build_config_vars := \
-  FLASH_VERSION \
   TARGET_PRODUCT \
   TARGET_BUILD_VARIANT \
+  FLASH_VERSION \
+  BUILD_ID \
+  TARGET_GCC_VERSION \
+  LLVM_RELEASE_VERSION \
   TARGET_ARCH \
   TARGET_ARCH_VARIANT \
   TARGET_CPU_VARIANT \
   TARGET_2ND_ARCH_VARIANT \
   TARGET_2ND_CPU_VARIANT \
-  BUILD_ID \
-  TARGET_GCC_VERSION \
-  LLVM_RELEASE_VERSION \
   OUT_DIR
 
 ifeq ($(TARGET_BUILD_PDK),true)
@@ -79,9 +79,9 @@ endif
 
 ifneq ($(filter report_config,$(DUMP_MANY_VARS)),)
 # Construct the shell commands that print the config banner.
-report_config_sh := echo '============================================';
+report_config_sh := echo '=======================================';
 report_config_sh += $(foreach v,$(print_build_config_vars),echo '$v=$($(v))';)
-report_config_sh += echo '============================================';
+report_config_sh += echo '=======================================';
 endif
 
 # Dump mulitple variables to "<var>=<value>" pairs, one per line.
@@ -106,8 +106,8 @@ endif
 endif # CALLED_FROM_SETUP
 
 ifneq ($(PRINT_BUILD_CONFIG),)
-$(info ============================================)
+$(info =======================================)
 $(foreach v, $(print_build_config_vars),\
   $(info $v=$($(v))))
-$(info ============================================)
+$(info =======================================)
 endif

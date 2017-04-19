@@ -336,7 +336,9 @@ function addcompletions()
     dir="sdk/bash_completion"
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
-            echo "including $f"
+            if [[ ${ENVSETUP_DEBUG} = true ]]; then
+                echo "including $f"
+            fi
             . $f
         done
     fi
@@ -577,7 +579,9 @@ function breakfast()
     unset LUNCH_MENU_CHOICES
     for f in `/bin/ls vendor/flash/vendorsetup.sh 2> /dev/null`
         do
-            echo "including $f"
+            if [[ ${ENVSETUP_DEBUG} = true ]]; then
+                echo "including $f"
+            fi
             . $f
         done
     unset f
@@ -1715,7 +1719,9 @@ for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2>
          `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
          `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
 do
-    echo "including $f"
+    if [[ ${ENVSETUP_DEBUG} = true ]]; then
+        echo "including $f"
+    fi
     . $f
 done
 unset f

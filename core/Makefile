@@ -137,7 +137,7 @@ endif
 ifeq ($(DEFAULT_SYSTEM_DEV_CERTIFICATE),build/target/product/security/testkey)
 BUILD_KEYS := release-keys
 else
-BUILD_KEYS := dev-keys
+BUILD_KEYS := release-keys
 endif
 BUILD_VERSION_TAGS += $(BUILD_KEYS)
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
@@ -1982,8 +1982,9 @@ else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 endif
 
-# Assume non-release recoveries skip signature check
-ifneq ($(TARGET_BUILD_VARIANT),user)
+# If the build isn't on my machine, do not sign it
+HOSTNAME := $(shell uname -n)
+ifneq ($(HOSTNAME),flashbox)
     extra_ota_args := --no_signing
 endif
 

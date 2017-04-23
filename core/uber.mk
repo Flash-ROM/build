@@ -80,9 +80,11 @@ ifeq ($(STRICT_ALIASING),true)
   endif
 endif
 
-ifeq ($(GRAPHITE_OPTS),true)
-  # Enable graphite only on GCC
-  ifneq ($(LOCAL_CLANG),true)
-    my_cflags += $(GRAPHITE_FLAGS)
+ifndef LOCAL_IS_HOST_MODULE
+  ifeq ($(GRAPHITE_OPTS),true)
+    # Enable graphite only on GCC
+    ifneq ($(LOCAL_CLANG),true)
+      my_cflags += $(GRAPHITE_FLAGS)
+    endif
   endif
 endif

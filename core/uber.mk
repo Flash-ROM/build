@@ -17,7 +17,6 @@
 # Strict Aliasing #
 ###################
 LOCAL_DISABLE_STRICT := \
-	libc% \
 	libpdfiumfpdfapi \
 	mdnsd
 
@@ -47,7 +46,7 @@ GRAPHITE_FLAGS := \
 	-floop-strip-mine \
 	-floop-block
 
-CUSTOM_FLAGS := -O3 -g0 -DNDEBUG
+CUSTOM_FLAGS := -O3 -g0 -DNDEBUG -fuse-ld=gold
 O_FLAGS := -O3 -O2 -Os -O1 -O0 -Og -Oz
 
 # Remove all flags we don't want use high level of optimization
@@ -58,7 +57,7 @@ my_conlyflags := $(filter-out -Wall -Werror -g -Wextra -Weverything $(O_FLAGS),$
 # IPA
 ifndef LOCAL_IS_HOST_MODULE
   ifeq (,$(filter true,$(my_clang)))
-    my_cflags += -fipa-sra -fipa-pta -fipa-cp -fipa-cp-clone
+    my_cflags += -fipa-pta
   else
     my_cflags += -analyze -analyzer-purge
   endif
@@ -72,10 +71,10 @@ ifeq ($(STRICT_ALIASING),true)
   # Remove the no-strict-aliasing flags
   my_cflags := $(filter-out -fno-strict-aliasing,$(my_cflags))
   ifneq (1,$(words $(filter $(LOCAL_DISABLE_STRICT),$(LOCAL_MODULE))))
-    ifneq ($(LOCAL_CLANG),false)
-      my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_GLANG_LEVEL)
-    else
+    ifeq (,$(filter true,$(my_clang)))
       my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_GCC_LEVEL)
+    else
+      my_cflags += $(STRICT_ALIASING_FLAGS) $(STRICT_CLANG_LEVEL)
     endif
   endif
 endif

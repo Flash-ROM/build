@@ -9,9 +9,19 @@ print_build_config_vars := \
   LLVM_RELEASE_VERSION \
   TARGET_ARCH \
   TARGET_ARCH_VARIANT \
-  TARGET_CPU_VARIANT \
-  TARGET_2ND_ARCH_VARIANT \
-  TARGET_2ND_CPU_VARIANT \
+  TARGET_CPU_VARIANT
+
+ifneq ($(TARGET_2ND_ARCH_VARIANT),)
+print_build_config_vars += \
+  TARGET_2ND_ARCH_VARIANT
+endif
+
+ifneq ($(TARGET_2ND_CPU_VARIANT),)
+print_build_config_vars += \
+  TARGET_2ND_CPU_VARIANT
+endif
+
+print_build_config_vars += \
   OUT_DIR
 
 ifeq ($(TARGET_BUILD_PDK),true)
